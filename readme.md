@@ -621,4 +621,68 @@ end
 
 The 2nd `render` method is better than the first, and makes the test pass. That test is gnarly, though. I'll commit it, then refactor it into something clearer. Here's the pre-refactor version:
 
-https://github.com/josh-works/battleship/commits/5c147d7
+https://github.com/josh-works/battleship/commits/705a27d
+
+Now I'm gonna refactor into more clearly labeled test cases. I did slight modifications, mostly just added `def test_` blocks within the prior test. After refactoring the test, I decided to re-name two of the methods inside of `render`:
+
+
+https://github.com/josh-works/battleship/commits/71efefe
+
+-------------
+
+Phew, almost done with iteration 1, I've been at this for... 35 min so far? maybe? I love these projects. It's fun to sling so much code so quickly. Normally I spend all day to make like a 1-line change.
+
+Lets add the last piece of i1:
+
+> Additionally, we will include an optional boolean argument to indicate if we want to reveal a ship in the cell even if it has not been fired upon. This should render a cell that has not been fired upon and contains a ship as an “S”. This will be useful for showing the user where they placed their ships and for debugging.
+
+
+Here's my test:
+
+```ruby
+def test_render_in_debug_mode_reveals_ship_location
+  @cell.place_ship(@cruiser)
+  empty_cell = Cell.new("C2")
+  
+  assert_equal ".", @cell.render
+  
+  assert_equal "S", @cell.render(true)
+  assert_equal ".", empty_cell.render(true)
+end
+```
+
+Let's make it pass!
+
+First, we'll update `render` to take an argument, we'll call it `debug_mode`, and default it to `false`:
+
+```ruby
+def render(debug_mode=false)
+  .
+  .
+  .
+
+```
+
+Now we'll do something if `debug_mode` is true...
+
+
+
+```ruby
+def render(debug_mode=false)
+  return "S" if debug_mode && ship && cell_has_not_been_fired_upon?
+  return "." if cell_has_not_been_fired_upon?
+  return "M" if shot_was_a_miss?
+  return "X" if ship_has_been_sunk?
+  return "H" if shot_was_a_hit?
+end
+```
+
+Callin' it here. Done with iteration 1.
+
+
+https://github.com/josh-works/battleship/commits/16e82c9
+
+
+
+
+
