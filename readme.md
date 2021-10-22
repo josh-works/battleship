@@ -910,9 +910,13 @@ Stick a pry in there, test it out.
 
 https://github.com/josh-works/battleship/commits/b2c1988
 
+------------
+
 I'm another 30 minutes in, need to attend to some other stuff. 
 
 I'm now about 1.5 hours into this project. Enjoying it, and def could move a lot faster if I wasn't writing it all out.
+
+## How to use this guide to improve your own knowledge in a permanent and effective way
 
 I hope to make this all very clear/obvious because if you're going a lot slower, or struggling to find good methods/structure/testing methodologies, it's safe to _pattern match off of me quite heavily_. 
 
@@ -932,7 +936,7 @@ If you have to look at the paper more than 2x, or it takes you more than 15 minu
 
 This is how you make the code "your own". Your brain will make so many new connections, and you'll actually internalize a TON of cool lessons. 
 
-
+related: [Why Tacit Knowledge is More Important Than Deliberate Practice](https://commoncog.com/blog/tacit-knowledge-is-a-real-thing/)
 
 
 
