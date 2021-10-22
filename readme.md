@@ -728,5 +728,189 @@ https://github.com/josh-works/battleship/commits/16e82c9
 
 ## Board Class
 
+`Board.cells` returns a hash of... stuff. Lets start a test.
+
+Instructions feel a bit unclear... here's what I'm working with. I don't love it:
+
+```ruby
+def test_cells_returns_a_formatted_hash
+  assert_instance_of Hash, @board.cells
+  assert_equal :A1, @board.cells.first.key
+  assert_instance_of Cell, @board.cells.first
+end
+```
+>  Instead, we can assert what we do know about this hash. It’s a hash, it should have 16 key/value pairs, and those keys point to cell objects.
+
+key/value pairs, pointing to cell objects...
+
+I'll just see if I can make it work.
+
+Here's what I kinda pseudo-coded up. I hope it works, not sure, it'll prob need some tweaking, which we'll find when we start running the tests:
+
+```ruby
+class Board
+  attr_reader :cells
+  def initialize()
+    @cells = build_cells
+  end
+  
+  def build_cells
+    ("a".."d").each_with_index do |letter, num|
+      coord = letter + num
+      @cells[coord] = Cell.new(cord)
+    end
+  end
+end
+```
+
+Phew. I'm playing with this a bit as I go, what's above isn't _exactly_ the first thing I wrote, but it's close. Running the tests (I.E. I'm typing `rake` into the terminal, knowing it runs all my tests.)
+
+```
+1) Error:
+BoardTest#test_cells_returns_a_formatted_hash:
+NameError: uninitialized constant BoardTest::Board
+Did you mean?  BoardTest
+  /Users/joshthompson/me/projects/battleship/test/board_test.rb:5:in `setup'
+```
+
+Oh, forgot to add `board` to my `test_helper`. Just fixed it in:
+
+https://github.com/josh-works/battleship/commits/71a6cf9
+
+Running `rake` again:
+
+```
+1) Error:
+BoardTest#test_cells_returns_a_formatted_hash:
+TypeError: no implicit conversion of Integer into String
+```
+
+Added `to_s` to num:
+
+https://github.com/josh-works/battleship/commits/cfa8e4e
+
+`rake` again. Undefined local variable, need to fix `cord` => `coord`
+
+https://github.com/josh-works/battleship/commits/d534f63
+
+`rake` again:
+
+```
+1) Error:
+BoardTest#test_cells_returns_a_formatted_hash:
+NoMethodError: undefined method `[]=' for nil:NilClass
+```
+
+time to stick a `pry`  in. 
+
+Did a quick refactor, to go a bit more incremental: https://github.com/josh-works/battleship/commits/5ee052e
+
+And tested a tiny bit in pry:
+
+![in pry](./images/pry-test.jpg)
+
+Take the pry out, re-add it at the end of the `initialize`, and lets see what we've got:
+
+![in pry](./images/pry-test-02.jpg)
+
+Awesome. 
+
+Now I'm getting some test errors again, because this `board` class doesn't throw errors as soon as it's initialized:
+
+```
+1) Error:
+BoardTest#test_cells_returns_a_formatted_hash:
+NoMethodError: undefined method `key' for #<Array:0x00007fd52f0cbe60>
+```
+
+
+When you call `first` on a `Hash`, I _think_ you get access to it's key and value as arrays indexed at [0] and [1], so I'm making that change, re-running the tests, and if it's not instantly fixed I'm prying into it.
+
+Perfect, fixed it:
+
+https://github.com/josh-works/battleship/commits/d2dadd4
+
+Now a minor formatting problem, the key is close-but-not-quite. 
+
+It needs to be a string, and it needs to have proper casing:
+
+https://github.com/josh-works/battleship/commits/87d24b8
+
+Now +1 the index, so it doesn't start at 0, re-run the tests... and access the array correctly:
+
+https://github.com/josh-works/battleship/commits/303e0e7
+
+Oh, and... lets make sure I've got 16 cells. 
+
+... adding a test... and it fails.
+
+
+Ooooh, I need one more inner loop to get the count right. I'm doing A1, B2, C3, D4. 
+
+Lets fix that:
+
+```ruby
+class Board
+  attr_reader :cells
+  def initialize()
+    @cells = {}
+    build_cells
+  end
+  
+  def build_cells
+    width = 4 # this will be our "width", will prob make a method argument later
+    ("a".."d").each do |letter|
+      width.times do |num|  #auto-formats to correct width
+        coord = letter.upcase + (num + 1).to_s
+        @cells[coord] = Cell.new(coord) 
+      end
+    end
+  end
+end
+```
+
+Hokay. Re-run the tests, check it in Pry, all looks good, take pry out, confirm all is good:
+
+https://github.com/josh-works/battleship/commits/da4de4f
+
+Here's what the whole board class looks like right now:
+
+https://github.com/josh-works/battleship/blob/da4de4f4c18a6ae9f19b3428077dbef8c92e43db/lib/board.rb
+
+
+
+## Validating Coordinates
+
+Add a quick test:
+
+```ruby
+def valid_coordinate_returns_true_or_false
+  assert @board.valid_coordinate?("A1")
+  refute @board.valid_coordinate?("E1")
+end
+```
+
+This method might seem complex at first. It's I think pretty simple. We can call our cells hash with that value passed in - if it exists, it'll be anything but `nil`:
+
+like:
+
+```ruby
+@cells["A1"] # returns cell object, isn't nil, the method returns true
+@cells["Z1"] # not found, returns nil, method returns false/falsey
+```
+
+
+```ruby
+def valid_coordinate?(coord)
+  @cells[coord]
+end
+```
+
+Stick a pry in there, test it out.
+
+https://github.com/josh-works/battleship/commits/b2c1988
+
+-------------
+
 
 
