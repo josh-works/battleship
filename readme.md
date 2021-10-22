@@ -16,6 +16,8 @@ Current commit: `https://github.com/josh-works/battleship/commits/42d782d`
 
 ----------------
 
+## Basic setup
+
 We've got an interaction pattern. At minimum, a ship and a cell. I can see what methods it'll respond to, so I'm going to frame both out (in the library _and_ test files) but leave it blank.
 
 I ♥️ Minitest, so that's what I'll use.
@@ -38,6 +40,8 @@ Next, I'll build a test_helper so I don't have to re-reference files.
 Outlined a basic test in `ship_test.rb`, added/committed:
 
 Current commit: `https://github.com/josh-works/battleship/commits/a6eca27`
+
+## First ship test(s)
 
 Lets make the test pass. 
 
@@ -71,6 +75,8 @@ class Ship
   end
 end
 ```
+
+## Ship#health
 
 Now I need `Ship#health` to exist. Since length is fixed, but health isn't, I'm setting `@health` in initialization to the same value as `length`, and then I'll `-=` it as time goes on.
 
@@ -124,6 +130,8 @@ Current commit: `https://github.com/josh-works/battleship/commits/3dcdbe0`
 
 
 OK, so the ship is outlined, now we need ways to "interact" with it. 
+
+## `Ship#hit`
 
 The interaction pattern has this:
 
@@ -192,6 +200,8 @@ Current commit: https://github.com/josh-works/battleship/commits/908fef9
 
 -----------------
 
+## `Cell` tests
+
 3 minutes left before my meeting... onward!
 
 ok, meeting time, here's my test. I'll make it pass after:
@@ -240,6 +250,8 @@ class Cell
 end
 ```
 
+## `Cell#place_ship(ship)`
+
 Now lets deal with `place_ship`:
 
 ```ruby
@@ -276,6 +288,8 @@ All tests pass, I'm at
 https://github.com/josh-works/battleship/commits/66850d5
 
 ---------------
+
+## `Cell#fired_upon?`
 
 From iteration 1:
 
@@ -409,6 +423,7 @@ All looks good, tests pass.
 
 https://github.com/josh-works/battleship/commits/e930918
 
+## Adding a `Rakefile` to make running tests easy
 
 Now that I have two test files, I'm going to add a Rake file that allows me to run `rake test` and run tests against each file in the `test` directory:
 
@@ -419,6 +434,8 @@ Now I can do `rake` or `rake test` in the terminal, and all tests are run:
 https://github.com/josh-works/battleship/commits/5c147d7
 
 ---------------------
+
+## `Cell#render`
 
 Lets build this `Cell#render` method...
 
@@ -623,6 +640,8 @@ The 2nd `render` method is better than the first, and makes the test pass. That 
 
 https://github.com/josh-works/battleship/commits/705a27d
 
+## Refactoring the `Cell#render` test and method
+
 Now I'm gonna refactor into more clearly labeled test cases. I did slight modifications, mostly just added `def test_` blocks within the prior test. After refactoring the test, I decided to re-name two of the methods inside of `render`:
 
 
@@ -631,6 +650,8 @@ https://github.com/josh-works/battleship/commits/71efefe
 -------------
 
 Phew, almost done with iteration 1, I've been at this for... 35 min so far? maybe? I love these projects. It's fun to sling so much code so quickly. Normally I spend all day to make like a 1-line change.
+
+## `debug_mode` in `Cell#render`
 
 Lets add the last piece of i1:
 
