@@ -7,7 +7,7 @@ class Board
   def build_cells
     ("a".."d").each_with_index do |letter, num|
       coord = letter + num.to_s
-      @cells[coord] = Cell.new(cord)
+      @cells[coord] = Cell.new(coord)
     end
   end
 end
