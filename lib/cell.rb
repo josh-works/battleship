@@ -25,16 +25,16 @@ class Cell
   
   def render
     return "." if cell_has_not_been_fired_upon?
-    return "M" if fired_upon_and_empty?
+    return "M" if shot_was_a_miss?
     return "X" if ship_has_been_sunk?
-    return "H" if fired_upon_and_contains_ship?
+    return "H" if shot_was_a_hit?
   end
   
   def ship_has_been_sunk?
     ship.sunk?
   end
   
-  def fired_upon_and_contains_ship?
+  def shot_was_a_hit?
     fired_upon? && ship
   end
   
@@ -42,7 +42,7 @@ class Cell
     !fired_upon?
   end
   
-  def fired_upon_and_empty?
+  def shot_was_a_miss?
     fired_upon? && empty?
   end
 end

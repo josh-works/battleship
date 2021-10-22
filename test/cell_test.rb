@@ -29,24 +29,33 @@ class CellTest < Minitest::Test
     assert_equal 2, @cruiser.health
   end
   
-  def test_render_return_values
+  def test_render_returns_period_if_not_fired_upon
     # . if the cell has not been fired upon.
     assert_equal ".", @cell.render
-    
+  end
+  
+  def test_render_returns_M_if_shot_was_a_miss
     empty_cell = Cell.new("B5")
     empty_cell.fire_upon
     # M if the cell has been fired upon and it does not contain a ship (the shot was a miss).
     assert empty_cell.empty?
     assert_equal "M", empty_cell.render
-    
+  end
+  
+  def test_render_returns_H_if_shot_was_a_hit
     # H if the cell has been fired upon and it contains a ship (the shot was a hit).
     @cell.place_ship(@cruiser)     # place the ship
     @cell.fire_upon                # fire upon placed ship
     
     assert_equal "H", @cell.render # assert that ship shows it's been hit
+  end
+  
+  def test_render_returns_X_if_ship_is_sunk
+    @cell.place_ship(@cruiser)     # place the ship
+    @cell.fire_upon                # fire upon ship
+    @cruiser.hit                   # hit ship 2x more
+    @cruiser.hit
     
-    @cruiser.hit
-    @cruiser.hit
     assert @cruiser.sunk?
     # X if the cell has been fired upon and its ship has been sunk.
     assert_equal "X", @cell.render
