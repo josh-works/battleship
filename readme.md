@@ -16,6 +16,25 @@ Current commit: `https://github.com/josh-works/battleship/commits/42d782d`
 
 ----------------
 
+# Housekeeping
+
+This document is meant to be read and worked through top-to-bottom, and as much as possible, I've captured stream-of-conciousness kind of stuff. I really want to make legible my process, as an aid to others. 
+
+This is the kind of learning I do particularly well with, when pairing with experts, so I'm more-or-less building a resource that I wish already existed. 
+
+I believe _speed_ is important, because if you feel like you can move quickly and confidently, you can do a lot. 
+
+That's why I try to make it clear how much time I'm spending on this, as I go. As I write this word, I'm a little over one hour into this project, and I'm just about to start Iteration 2. That's why I include links to specific commits, so you can see how and why this code/repository has changed. 
+
+If you feel like your time is particularly slow compared to this, you should "move slowly" and try to pick up as much as you can. It's worth going slowly.
+
+> Slow is smooth, and smooth is fast.
+
+_Off to Iteration 2!_
+
+
+# Iteration 1:
+
 ## Basic setup
 
 We've got an interaction pattern. At minimum, a ship and a cell. I can see what methods it'll respond to, so I'm going to frame both out (in the library _and_ test files) but leave it blank.
@@ -704,6 +723,10 @@ Callin' it here. Done with iteration 1.
 https://github.com/josh-works/battleship/commits/16e82c9
 
 
+
+# Iteration 2
+
+## Board Class
 
 
 
