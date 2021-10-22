@@ -33,5 +33,95 @@ First, I created four new files:
     └── ship_test.rb
 ```
 
-Next, I'll build a test_helper so I don't have to re-reference files:
+Next, I'll build a test_helper so I don't have to re-reference files.
+
+Outlined a basic test in `ship_test.rb`, added/committed:
+
+Current commit: `https://github.com/josh-works/battleship/commits/a6eca27`
+
+Lets make the test pass. 
+
+here's the current test:
+
+```ruby
+require './test/test_helper'
+
+class ShipTest < Minitest::Test
+  def setup
+    @ship = Ship.new("cruiser", 3)
+  end
+  
+  def test_attributes
+    assert_equal "cruiser", @ship.name
+    assert_equal 3, @ship.length
+    assert_equal 3, @ship.health
+    # refute ship.sunk
+  end
+end
+```
+
+Added the basic ship structure:
+
+```ruby
+class Ship
+  attr_reader :name, :length
+  def initialize(name, length)
+    @name = name
+    @length = length
+  end
+end
+```
+
+Now I need `Ship#health` to exist. Since length is fixed, but health isn't, I'm setting `@health` in initialization to the same value as `length`, and then I'll `-=` it as time goes on.
+
+```ruby
+class Ship
+  attr_reader :name, :length, :health
+  def initialize(name, length)
+    @name = name
+    @length = length
+    @health = length
+  end
+end
+```
+Now `Ship#sunk?` should prob return false as long as `health` is `> 0`:
+
+Here's the test:
+
+```ruby
+class ShipTest < Minitest::Test
+  def setup
+    @ship = Ship.new("cruiser", 3)
+  end
+  
+  def test_attributes
+    assert_equal "cruiser", @ship.name
+    assert_equal 3, @ship.length
+    assert_equal 3, @ship.health
+    refute @ship.sunk?
+  end
+end
+```
+
+and the class:
+
+```ruby
+class Ship
+  attr_reader :name, :length, :health
+  def initialize(name, length)
+    @name = name
+    @length = length
+    @health = length
+  end
+  
+  def sunk?
+    health == 0  # returns false unless health is 0. Neat huh?
+  end
+end
+```
+
+Current commit: `https://github.com/josh-works/battleship/commits/42d782d`
+
+
+OK, so the ship is outlined, now we need ways to "interact" with it. 
 

@@ -9,6 +9,6 @@ class ShipTest < Minitest::Test
     assert_equal "cruiser", @ship.name
     assert_equal 3, @ship.length
     assert_equal 3, @ship.health
-    # refute ship.sunk
+    refute @ship.sunk?
   end
 end
