@@ -12,7 +12,7 @@ I'm optimizing for speed, here, because I don't have much time.
 
 It's 9:35 AM, 2021-10-22, and I'm 3 minutes into this project. I'll keep a bit of a running timeline as I go, because that can be useful. I have a meeting in 22 min, hope to be done with I1 by then.
 
-Current commit: `https://github.com/josh-works/battleship/commits/42d782d`
+Current commit: `https://github.com/josh-works/battleship/commit/42d782d`
 
 ----------------
 
@@ -58,7 +58,7 @@ Next, I'll build a test_helper so I don't have to re-reference files.
 
 Outlined a basic test in `ship_test.rb`, added/committed:
 
-Current commit: `https://github.com/josh-works/battleship/commits/a6eca27`
+Current commit: `https://github.com/josh-works/battleship/commit/a6eca27`
 
 ## First ship test(s)
 
@@ -145,7 +145,7 @@ class Ship
 end
 ```
 
-Current commit: `https://github.com/josh-works/battleship/commits/3dcdbe0`
+Current commit: `https://github.com/josh-works/battleship/commit/3dcdbe0`
 
 
 OK, so the ship is outlined, now we need ways to "interact" with it. 
@@ -215,7 +215,7 @@ end
 
 And the tests pass. That finishes our ship interaction pattern.
 
-Current commit: https://github.com/josh-works/battleship/commits/908fef9
+Current commit: https://github.com/josh-works/battleship/commit/908fef9
 
 -----------------
 
@@ -304,7 +304,7 @@ end
 
 All tests pass, I'm at 
 
-https://github.com/josh-works/battleship/commits/66850d5
+https://github.com/josh-works/battleship/commit/66850d5
 
 ---------------
 
@@ -440,7 +440,7 @@ end
 
 All looks good, tests pass. 
 
-https://github.com/josh-works/battleship/commits/e930918
+https://github.com/josh-works/battleship/commit/e930918
 
 ## Adding a `Rakefile` to make running tests easy
 
@@ -450,7 +450,7 @@ I use this task regularly, so I copied-and-pasted from another project where I u
 
 Now I can do `rake` or `rake test` in the terminal, and all tests are run:
 
-https://github.com/josh-works/battleship/commits/5c147d7
+https://github.com/josh-works/battleship/commit/5c147d7
 
 ---------------------
 
@@ -657,14 +657,14 @@ end
 
 The 2nd `render` method is better than the first, and makes the test pass. That test is gnarly, though. I'll commit it, then refactor it into something clearer. Here's the pre-refactor version:
 
-https://github.com/josh-works/battleship/commits/705a27d
+https://github.com/josh-works/battleship/commit/705a27d
 
 ## Refactoring the `Cell#render` test and method
 
 Now I'm gonna refactor into more clearly labeled test cases. I did slight modifications, mostly just added `def test_` blocks within the prior test. After refactoring the test, I decided to re-name two of the methods inside of `render`:
 
 
-https://github.com/josh-works/battleship/commits/71efefe
+https://github.com/josh-works/battleship/commit/71efefe
 
 -------------
 
@@ -720,7 +720,7 @@ end
 Callin' it here. Done with iteration 1.
 
 
-https://github.com/josh-works/battleship/commits/16e82c9
+https://github.com/josh-works/battleship/commit/16e82c9
 
 
 
@@ -775,7 +775,7 @@ Did you mean?  BoardTest
 
 Oh, forgot to add `board` to my `test_helper`. Just fixed it in:
 
-https://github.com/josh-works/battleship/commits/71a6cf9
+https://github.com/josh-works/battleship/commit/71a6cf9
 
 Running `rake` again:
 
@@ -787,11 +787,11 @@ TypeError: no implicit conversion of Integer into String
 
 Added `to_s` to num:
 
-https://github.com/josh-works/battleship/commits/cfa8e4e
+https://github.com/josh-works/battleship/commit/cfa8e4e
 
 `rake` again. Undefined local variable, need to fix `cord` => `coord`
 
-https://github.com/josh-works/battleship/commits/d534f63
+https://github.com/josh-works/battleship/commit/d534f63
 
 `rake` again:
 
@@ -803,7 +803,7 @@ NoMethodError: undefined method `[]=' for nil:NilClass
 
 time to stick a `pry`  in. 
 
-Did a quick refactor, to go a bit more incremental: https://github.com/josh-works/battleship/commits/5ee052e
+Did a quick refactor, to go a bit more incremental: https://github.com/josh-works/battleship/commit/5ee052e
 
 And tested a tiny bit in pry:
 
@@ -828,17 +828,17 @@ When you call `first` on a `Hash`, I _think_ you get access to it's key and valu
 
 Perfect, fixed it:
 
-https://github.com/josh-works/battleship/commits/d2dadd4
+https://github.com/josh-works/battleship/commit/d2dadd4
 
 Now a minor formatting problem, the key is close-but-not-quite. 
 
 It needs to be a string, and it needs to have proper casing:
 
-https://github.com/josh-works/battleship/commits/87d24b8
+https://github.com/josh-works/battleship/commit/87d24b8
 
 Now +1 the index, so it doesn't start at 0, re-run the tests... and access the array correctly:
 
-https://github.com/josh-works/battleship/commits/303e0e7
+https://github.com/josh-works/battleship/commit/303e0e7
 
 Oh, and... lets make sure I've got 16 cells. 
 
@@ -871,7 +871,7 @@ end
 
 Hokay. Re-run the tests, check it in Pry, all looks good, take pry out, confirm all is good:
 
-https://github.com/josh-works/battleship/commits/da4de4f
+https://github.com/josh-works/battleship/commit/da4de4f
 
 Here's what the whole board class looks like right now:
 
@@ -908,7 +908,7 @@ end
 
 Stick a pry in there, test it out.
 
-https://github.com/josh-works/battleship/commits/b2c1988
+https://github.com/josh-works/battleship/commit/b2c1988
 
 ------------
 
