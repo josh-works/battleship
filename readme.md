@@ -188,4 +188,87 @@ end
 
 And the tests pass. That finishes our ship interaction pattern.
 
+Current commit: `https://github.com/josh-works/battleship/commits/908fef9`
 
+-----------------
+
+3 minutes left before my meeting... onward!
+
+ok, meeting time, here's my test. I'll make it pass after:
+
+```ruby
+require './test/test_helper'
+
+class CellTest < Minitest::Test
+  def setup
+    @cell = Cell.new("B4")
+    @cruiser = Ship.new("Cruiser", 3)
+  end
+  
+  def test_basic_attributes
+    assert_equal "B4", @cell.coordinate
+    assert_nil @cell.ship
+    assert @cell.empty?
+  end
+  
+  def test_place_ship_places_ship
+    @cell.place_ship(@cruiser)
+    assert_equal @cruiser, @cell.ship
+    refute @cell.empty?
+  end
+end
+```
+
+-------------
+
+Meeting's over, lets push a bit farther:
+
+Quickly outlined the `Cell`:
+
+```ruby
+class Cell
+  attr_reader :coordinate, :ship, :empty
+  def initialize(coordinate)
+    @coordinate = coordinate
+    @ship = nil
+    @empty = true
+  end
+  
+  def empty?
+    empty
+  end
+end
+```
+
+Now lets deal with `place_ship`:
+
+```ruby
+# test/cell_test.rb
+def test_place_ship_places_ship
+  @cell.place_ship(@cruiser)
+  assert_equal @cruiser, @cell.ship
+  refute @cell.empty?
+end
+```
+
+I'm going to refactor the `empty?` method - taking it out of the initialize method, and instead reading the `@ship` ivar (instance variable), and "doing logic" on that:
+
+```ruby
+class Cell
+  attr_reader :coordinate, :ship
+  def initialize(coordinate)
+    @coordinate = coordinate
+    @ship = nil
+  end
+  
+  def empty?
+    true unless ship # I don't love this, but it gives me what I want.
+  end
+  
+  def place_ship(ship)
+    @ship = ship
+  end
+end
+```
+
+All tests pass, I'm at 
