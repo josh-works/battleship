@@ -910,7 +910,29 @@ Stick a pry in there, test it out.
 
 https://github.com/josh-works/battleship/commits/b2c1988
 
--------------
+I'm another 30 minutes in, need to attend to some other stuff. 
+
+I'm now about 1.5 hours into this project. Enjoying it, and def could move a lot faster if I wasn't writing it all out.
+
+I hope to make this all very clear/obvious because if you're going a lot slower, or struggling to find good methods/structure/testing methodologies, it's safe to _pattern match off of me quite heavily_. 
+
+If you find yourself pattern matching on myself, and needing to see what I'm doing, and not _yet_ able to rebuild all this code yourself, no sweat. I'd say copy a whole test file and class from me, with as much understanding as possible.
+
+THEN when you've got my tests, and they're passing, do these very specific three things, in this order:
+
+1. write all the code down on a piece of paper
+2. delete the code from the library and test file
+3. Rebuild the code, from scratch, looking at the paper as much as you need to (try to use only the project spec, though)
+
+These three things should be done after at least a ten minute break, and a short walk.
+
+It should take you no more than 15 minutes to rebuild the class. If it's taking you longer than that, look at the paper more.
+
+If you have to look at the paper more than 2x, or it takes you more than 15 minutes, rinse and repeat this process.
+
+This is how you make the code "your own". Your brain will make so many new connections, and you'll actually internalize a TON of cool lessons. 
+
+
 
 
 
