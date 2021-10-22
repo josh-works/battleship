@@ -1,4 +1,4 @@
-# An excruciatingly detailed but hopefully comprehensive walkthrough
+# An excruciatingly-detailed but hopefully comprehensive walkthrough
 
 In the same style as I [did a walk-through](https://github.com/josh-works/futbol) of Turing's Futbol project, I'm doing the same on this Battleship project.
 
