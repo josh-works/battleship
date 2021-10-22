@@ -407,6 +407,11 @@ end
 
 All looks good, tests pass. 
 
+https://github.com/josh-works/battleship/commits/e930918
 
 
 Now that I have two test files, I'm going to add a Rake file that allows me to run `rake test` and run tests against each file in the `test` directory:
+
+I use this task regularly, so I copied-and-pasted from another project where I use the Rake task. There's a StackOverflow answer to `how to run all tests via rake` somewhere. 
+
+Now I can do `rake` or `rake test` in the terminal, and all tests are run.
