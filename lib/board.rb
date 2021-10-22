@@ -6,11 +6,9 @@ class Board
   end
   
   def build_cells
-    results = {}
     ("a".."d").each_with_index do |letter, num|
-      coord = letter + num.to_s
-      require "pry"; binding.pry
-      results[coord] = Cell.new(coord) 
+      coord = letter.upcase + num.to_s
+      @cells[coord] = Cell.new(coord) 
     end
   end
 end
