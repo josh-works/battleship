@@ -188,7 +188,7 @@ end
 
 And the tests pass. That finishes our ship interaction pattern.
 
-Current commit: `https://github.com/josh-works/battleship/commits/908fef9`
+Current commit: https://github.com/josh-works/battleship/commits/908fef9
 
 -----------------
 
@@ -272,3 +272,141 @@ end
 ```
 
 All tests pass, I'm at 
+
+https://github.com/josh-works/battleship/commits/66850d5
+
+---------------
+
+From iteration 1:
+
+> Additionally, a cell knows when it has been fired upon. When it is fired upon, the cell’s ship should be damaged if it has one:
+
+I'm slimming down the interaction pattern a bit:
+
+```ruby
+> cell = Cell.new("B4")
+# => #<Cell:0x00007f84f0ad4720...>
+
+> cruiser = Ship.new("Cruiser", 3)
+# => #<Ship:0x00007f84f0891238...>
+
+> cell.place_ship(cruiser)
+
+> cell.fired_upon?
+# => false
+
+> cell.fire_upon
+
+> cell.ship.health
+# => 2
+
+> cell.fired_upon?
+# => true
+```
+
+Without having any idea how you might implement this, you can still write the tests:
+
+```ruby
+def test_cell_can_be_fired_upon_and_know_about_it
+  @cell.place_ship(@cruiser)
+  
+  refute @cell.fired_upon?
+  
+  @cell.fire_upon
+  
+  assert @cell.fired_upon?
+  assert_equal 2, @cruiser.health
+end
+```
+
+Now, we are adding two methods to the `Cell` class, so lets outline those methods in the class, so when we run the tests we don't get `MethodNotFound`:
+
+```ruby
+# lib/cell.rb
+
+class Cell
+  attr_reader :coordinate, :ship
+  def initialize(coordinate)
+    @coordinate = coordinate
+    @ship = nil
+  end
+  
+  def empty?
+    true unless ship
+  end
+  
+  def place_ship(ship)
+    @ship = ship
+  end
+  
+  def fired_upon?
+    
+  end
+  
+  def fire_upon
+  end
+end
+```
+
+Now we're just getting `nil` when we expect other things from the tests. 
+
+Did you do all this yourself, by the way? Are you running the tests in your editor regularly? I expect you to do so, and be "following along" with me, by reproducing everything in your own editor.
+
+Now, I want to be able to call something very simple in `fired_upon?`. Like `ship.any_damage?`
+
+Obviously I could do logic on the ship from the `Cell` class, like:
+
+```ruby
+# lib/cell.rb
+def fired_upon?
+  true if ship.health < ship.length
+end
+```
+
+But I'd rather do:
+
+```ruby
+def fired_upon?
+  ship.damaged?
+end
+```
+
+which requires us to add a `damaged` method (and test) to our ship class...
+
+Nevermind, I'm going to make `fired_upon` read from an instance variable. This is a `cell`, a specific coordinate, it doesn't need to know if the ship has been hit in other spots.
+
+Here's what I've got now:
+
+```ruby
+class Cell
+  attr_reader :coordinate, :ship, :fired_upon
+  def initialize(coordinate)
+    @coordinate = coordinate
+    @ship = nil
+    @fired_upon = false
+  end
+  
+  def empty?
+    true unless ship
+  end
+  
+  def place_ship(ship)
+    @ship = ship
+  end
+  
+  def fired_upon?
+    fired_upon
+  end
+  
+  def fire_upon
+    @fired_upon = true # toggles the value in the cell
+    ship.hit           # causes the ship to record some damage
+  end
+end
+```
+
+All looks good, tests pass. 
+
+
+
+Now that I have two test files, I'm going to add a Rake file that allows me to run `rake test` and run tests against each file in the `test` directory:
