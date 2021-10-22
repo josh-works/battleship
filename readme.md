@@ -120,8 +120,72 @@ class Ship
 end
 ```
 
-Current commit: `https://github.com/josh-works/battleship/commits/42d782d`
+Current commit: `https://github.com/josh-works/battleship/commits/3dcdbe0`
 
 
 OK, so the ship is outlined, now we need ways to "interact" with it. 
+
+The interaction pattern has this:
+
+```ruby
+> cruiser.sunk?
+#=> false
+
+> cruiser.hit
+
+> cruiser.health
+#=> 2
+
+> cruiser.hit
+
+> cruiser.health
+#=> 1
+
+> cruiser.sunk?
+#=> false
+
+> cruiser.hit
+
+> cruiser.sunk?
+#=> true
+```
+I'm adding this test:
+
+```ruby
+def test_ship_can_be_hit_and_sunk
+  @ship.hit
+  assert_equal 2, @ship.health
+  refute @ship.sunk?
+  
+  @ship.hit
+  @ship.hit
+  
+  assert_equal 0, @ship.health
+  assert @ship.sunk?
+end
+```
+
+Now I need to add the `hit` method:
+
+```ruby
+class Ship
+  attr_reader :name, :length, :health
+  def initialize(name, length)
+    @name = name
+    @length = length
+    @health = length
+  end
+  
+  def sunk?
+    health == 0
+  end
+  
+  def hit
+    @health -= 1
+  end
+end
+```
+
+And the tests pass. That finishes our ship interaction pattern.
+
 
