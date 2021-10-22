@@ -9,6 +9,7 @@ class BoardTest < Minitest::Test
     assert_instance_of Hash, @board.cells
     assert_equal "A1", @board.cells.first[0]
     assert_instance_of Cell, @board.cells.first[1]
+    assert_equal 16, @board.cells.count
   end
   
 end
