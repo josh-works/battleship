@@ -414,4 +414,211 @@ Now that I have two test files, I'm going to add a Rake file that allows me to r
 
 I use this task regularly, so I copied-and-pasted from another project where I use the Rake task. There's a StackOverflow answer to `how to run all tests via rake` somewhere. 
 
-Now I can do `rake` or `rake test` in the terminal, and all tests are run.
+Now I can do `rake` or `rake test` in the terminal, and all tests are run:
+
+https://github.com/josh-works/battleship/commits/5c147d7
+
+---------------------
+
+Lets build this `Cell#render` method...
+
+> Finally, a Cell will have a method called render which returns a String representation of the Cell for when we need to print the board. A cell can potentially be rendered as:
+> 
+>     ”.” if the cell has not been fired upon.
+>     “M” if the cell has been fired upon and it does not contain a ship (the shot was a miss).
+>     “H” if the cell has been fired upon and it contains a ship (the shot was a hit).
+>     “X” if the cell has been fired upon and its ship has been sunk.
+
+
+so, our test will have things like:
+
+```ruby
+# cell_test.rb
+
+def test_render_return_values
+  
+  # . if the cell has not been fired upon.
+  # M if the cell has been fired upon and it does not contain a ship (the shot was a miss).
+  # H if the cell has been fired upon and it contains a ship (the shot was a hit).
+  # X if the cell has been fired upon and its ship has been sunk.
+
+end
+```
+
+Now I'm going to "upgrade" each of these into some assertions, as far as I can:
+
+```ruby
+def test_render_return_values
+  
+  # . if the cell has not been fired upon.
+  assert_equal ".", @cell.render
+  # M if the cell has been fired upon and it does not contain a ship (the shot was a miss).
+  assert_equal "M", @cell.render
+  
+  # H if the cell has been fired upon and it contains a ship (the shot was a hit).
+  assert_equal "H", @cell.render
+  
+  # X if the cell has been fired upon and its ship has been sunk.
+  assert_equal "X", @cell.render
+end
+```
+
+Obviously this won't pass. Any cell by default won't be fired upon, so the first one should be easy to do. I then created an empty cell, and now the second `render` case should be passing:
+
+```ruby
+def test_render_return_values
+  # . if the cell has not been fired upon.
+  assert_equal ".", @cell.render
+  
+  empty_cell = Cell.new
+  empty_cell.fire_upon
+  # M if the cell has been fired upon and it does not contain a ship (the shot was a miss).
+  assert empty_cell.empty?
+  assert_equal "M", empty_cell.render
+  
+  # H if the cell has been fired upon and it contains a ship (the shot was a hit).
+  assert_equal "H", @cell.render
+  
+  # X if the cell has been fired upon and its ship has been sunk.
+  assert_equal "X", @cell.render
+end
+```
+
+I had to slighly modify the test, to pass in coordinates to `Cell.new`, and I had to update the `fire_upon` method to only call `ship.hit` if there is, in fact, a ship:
+
+```ruby
+def fire_upon
+  @fired_upon = true
+  ship.hit if ship
+end
+
+def render
+  return "." if !fired_upon?
+end
+```
+
+Now the first portion of the test passes, and it's failing on the `assert_equal "M"`... line.
+
+Progress!
+
+Let's add a line with some aspirational code to the `render` method:
+
+```ruby
+def render
+  return "." if !fired_upon?
+  return "M" if fired_upon_empty_cell?
+end
+```
+
+That's a method I didn't write, this `fired_upon_empty_cell?` thing. Here's the other way to write it:
+
+```ruby
+def render
+  return "." if !fired_upon?
+  return "M" if (fired_upon? && empty?)
+end
+```
+
+But this is getting complicated, so lets do this:
+
+```ruby
+def render
+  return "." if !fired_upon?
+  return "M" if fired_upon_and_empty?
+end
+
+def fired_upon_and_empty?
+  fired_upon? && empty?
+end
+```
+
+We could write tests for these new methods, and maybe you should, but I'm not going to. I'm going to refactor the first line of `render` to be explicit:
+
+```ruby
+def render
+  return "." if cell_has_not_been_fired_upon?
+  return "M" if fired_upon_and_empty?
+end
+
+def cell_has_not_been_fired_upon?
+  !fired_upon?
+end
+
+def fired_upon_and_empty?
+  fired_upon? && empty?
+end
+```
+
+You should be able to see how this is making things slightly clearer...
+
+Now, in the test, we need to:
+
+1. Add a ship to the cell
+2. Fire upon that ship
+3. Make some assertions about the results
+
+Here's our test:
+
+```ruby
+def test_render_return_values
+  # . if the cell has not been fired upon.
+  assert_equal ".", @cell.render
+  
+  empty_cell = Cell.new("B5")
+  empty_cell.fire_upon
+  # M if the cell has been fired upon and it does not contain a ship (the shot was a miss).
+  assert empty_cell.empty?
+  assert_equal "M", empty_cell.render
+  
+  # H if the cell has been fired upon and it contains a ship (the shot was a hit).
+  @cell.place_ship(@cruiser)     # place the ship
+  @cell.fire_upon                # fire upon placed ship
+  
+  assert_equal "H", @cell.render # assert that ship shows it's been hit
+  
+  # X if the cell has been fired upon and its ship has been sunk.
+  assert_equal "X", @cell.render
+end
+```
+
+And here's the modified code:
+
+```ruby
+def render
+  return "." if cell_has_not_been_fired_upon?
+  return "M" if fired_upon_and_empty?
+  return "H" if fired_upon_and_contains_ship?
+end
+
+def fired_upon_and_contains_ship?
+  fired_upon? && ship
+end
+```
+
+Ah, and for the last one, I need to bump the order - with return statements, as soon as a "matching" clause is arrived upon, the method exists. So, I need for the method to check if the ship is sunk (and exit if it is) before it checks to see if the cell has been fired upon and contains a ship.
+
+Compare:
+
+```ruby
+def render
+  return "." if cell_has_not_been_fired_upon?
+  return "M" if fired_upon_and_empty?
+  return "H" if fired_upon_and_contains_ship?
+  return "X" if ship_has_been_sunk?
+end
+```
+
+vs:
+
+```ruby
+def render
+  return "." if cell_has_not_been_fired_upon?
+  return "M" if fired_upon_and_empty?
+  return "X" if ship_has_been_sunk?
+  return "H" if fired_upon_and_contains_ship?
+end
+```
+
+The 2nd `render` method is better than the first, and makes the test pass. That test is gnarly, though. I'll commit it, then refactor it into something clearer. Here's the pre-refactor version:
+
+https://github.com/josh-works/battleship/commits/5c147d7
