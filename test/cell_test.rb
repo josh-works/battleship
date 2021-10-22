@@ -60,4 +60,14 @@ class CellTest < Minitest::Test
     # X if the cell has been fired upon and its ship has been sunk.
     assert_equal "X", @cell.render
   end
+  
+  def test_render_in_debug_mode_reveals_ship_location
+    @cell.place_ship(@cruiser)
+    empty_cell = Cell.new("C2")
+    
+    assert_equal ".", @cell.render
+    
+    assert_equal "S", @cell.render(true)
+    assert_equal ".", empty_cell.render(true)
+  end
 end

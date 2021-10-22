@@ -23,7 +23,9 @@ class Cell
     ship.hit if ship
   end
   
-  def render
+  def render(debug_mode=false)
+    return "S" if debug_mode && ship && cell_has_not_been_fired_upon?
+    
     return "." if cell_has_not_been_fired_upon?
     return "M" if shot_was_a_miss?
     return "X" if ship_has_been_sunk?
