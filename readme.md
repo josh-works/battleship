@@ -1323,3 +1323,17 @@ I'm also making these new methods "private", which is a way to show to other dev
 Since I didn't add test for all these methods, I'm marking them all as `private`. Here's what that looks like:
 
 https://github.com/josh-works/battleship/commit/b914521
+
+## Sidebar on the instructions for `valid_placement?`
+
+I didn't read the rest of the instructions for valid placement. I didn't read about `Ordinal Values`, or `Ranges`. Nor did I use `each_cons`. I used `all?` and `each_with_index`. 
+
+You can do whatever you want, but I'm perfectly satisifed with my solution.
+
+I also did indeed do all of my testing of `valid_placement?` in a single test - but handled it as seperate test cases within it. 
+
+Again, do what you'd like.
+
+I think this took me about 30 minutes, I'm calling it here for now, again. I'll take on the `placing ships` piece next.
+
+
