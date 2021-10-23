@@ -17,4 +17,37 @@ class BoardTest < Minitest::Test
     refute @board.valid_coordinate?("E1")
   end
   
+  def test_valid_placement_returns_true_for_valid_placement
+    cruiser = Ship.new("Cruiser", 3)
+    
+    # valid horizontal placement
+    assert @board.valid_placement?(cruiser, ["A1", "A2", "A3"])
+    
+    # valid vertical placement
+    assert @board.valid_placement?(cruiser, ["A1", "B1", "C1"])
+  end
+  
+  def test_diagonal_placement_returns_true_if_any_placements_are_diagonal
+    assert @board.any_diagonal_placements?(["A1", "B2"])
+    refute @board.any_diagonal_placements?(["A1", "B1"])
+    refute @board.any_diagonal_placements?(["A1", "A1"])
+    assert @board.any_diagonal_placements?(["A1", "A2", "B3"])
+    assert @board.any_diagonal_placements?(["A1", "B1", "C2"])
+  end
+  
+  def test_valid_placement_returns_false_for_invalid_placement
+    cruiser = Ship.new("Cruiser", 3)
+    
+    # wrong length.... # done
+    refute @board.valid_placement?(cruiser, ["A1", "A2"])
+    
+    # diagonal placement... # done
+    refute @board.valid_placement?(cruiser, ["A1", "B3", "B4"])
+    
+    # outside the bounds of the board vertially ... # TODO
+    refute @board.valid_placement?(cruiser, ["C1", "D1", "E1"])
+    
+    # outside the bounds of the board horizontally ... # TODO
+    refute @board.valid_placement?(cruiser, ["C3", "C4", "C5"])
+  end  
 end
