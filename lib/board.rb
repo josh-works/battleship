@@ -26,32 +26,35 @@ class Board
     true
   end
   
-  def any_diagonal_placements?(coords)
-    contains_diagonal_placement = false
+  private
     
-    coords.each_with_index do |coord, i|
-      return contains_diagonal_placement if coords[i+1].nil?
+    def any_diagonal_placements?(coords)
+      contains_diagonal_placement = false
       
-      # check if row is same, `next` if so
-      row_1 = coord.chars.first
-      row_2 = coords[i+1].chars.first
-      next if row_1 == row_2
-      
-      if row_1 != row_2
-        col_1 = coord.chars.last
-        col_2 = coords[i+1].chars.last
-        contains_diagonal_placement = true if col_1 != col_2
+      coords.each_with_index do |coord, i|
+        return contains_diagonal_placement if coords[i+1].nil?
+        
+        # check if row is same, `next` if so
+        row_1 = coord.chars.first
+        row_2 = coords[i+1].chars.first
+        next if row_1 == row_2
+        
+        if row_1 != row_2
+          col_1 = coord.chars.last
+          col_2 = coords[i+1].chars.last
+          contains_diagonal_placement = true if col_1 != col_2
+        end
       end
     end
-  end
-  
-  def invalid_ship_length?(ship, coords)
-    ship.length != coords.length
-  end
-  
-  def all_cords_inside_board?(coords)
-    coords.all? do |coord|
-      valid_coordinate?(coord)
+    
+    
+    def invalid_ship_length?(ship, coords)
+      ship.length != coords.length
     end
-  end
+    
+    def all_cords_inside_board?(coords)
+      coords.all? do |coord|
+        valid_coordinate?(coord)
+      end
+    end
 end
