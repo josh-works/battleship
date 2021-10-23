@@ -938,5 +938,388 @@ This is how you make the code "your own". Your brain will make so many new conne
 
 related: [Why Tacit Knowledge is More Important Than Deliberate Practice](https://commoncog.com/blog/tacit-knowledge-is-a-real-thing/)
 
+---------------------
 
+## Validating Placements
 
+On to `board.valid_placement?`
+
+I am outlining two tests, straight from the get-go:
+
+```ruby
+def test_valid_placement_returns_true_for_valid_placement
+end
+
+def test_valid_placement_returns_false_for_invalid_placement
+end 
+```
+
+Now lets add some bones to those tests:
+
+```ruby
+def test_valid_placement_returns_true_for_valid_placement
+  cruiser = Ship.new("Cruiser", 3)
+  
+  assert board.valid_placement?(cruiser, ["A1", "A2", "A3"])
+end
+
+def test_valid_placement_returns_false_for_invalid_placement
+  skip
+  cruiser = Ship.new("Cruiser", 3)
+  
+  refute board.valid_placement(cruiser, ["A1", "B3", "B4"])
+end  
+```
+
+Already, I can see a few different kinds of placements that are both valid and invalid.
+
+Note that I'm using comments to help me figure out what each test is trying to do:
+
+```ruby
+def test_valid_placement_returns_true_for_valid_placement
+  cruiser = Ship.new("Cruiser", 3)
+  
+  # valid horizontal placement
+  assert @board.valid_placement?(cruiser, ["A1", "A2", "A3"])
+  
+  # valid vertical placement
+  assert @board.valid_placement?(cruiser, ["A1", "B1", "C1"])
+end
+
+def test_valid_placement_returns_false_for_invalid_placement
+  skip
+  cruiser = Ship.new("Cruiser", 3)
+  
+  # wrong length
+  refute @board.valid_placement(cruiser, ["A1", "A2"])
+  
+  # diagonal placement
+  refute @board.valid_placement(cruiser, ["A1", "B3", "B4"])
+  
+  # outside the bounds of the board vertially
+  refute @board.valid_placement(cruiser, ["C1", "D1", "E1"])
+  
+  # outside the bounds of the board horizontally
+  refute @board.valid_placement(cruiser, ["C3", "C4", "C5"])
+end 
+```
+
+I've not touched my board class yet. I'm first deciding if I'm happy with these tests. I think I am, so I'm going to work on making the first of these two pass. (Note the `skip` in the 2nd test.)
+
+OK, it's gonna be easier to generate false positives here, than false negatives. Here's my `valid_placement` method right now:
+
+```ruby
+def valid_placement?(ship, coords)
+  validate_ship_length(ship, coords)
+  validate_coords_are_within_board(coords)
+  true
+end
+```
+
+that should make you say 
+> I wonder what those other methods do
+
+the idea is that if _any_ of these methods returns false, it should "exit" the method early. If none of them return false, the last line will be evaluated, and the return value will be `true`.
+
+Here's the methods in context:
+
+```ruby
+
+def valid_coordinate?(coord)
+  @cells[coord]
+end
+
+def valid_placement?(ship, coords)
+  validate_ship_length(ship, coords)
+  validate_coords_are_within_board(coords)
+  true
+end
+
+def validate_ship_length(ship, coords)
+  return false if ship.length != coords.length
+end
+
+def validate_coords_are_within_board(coords)
+  coords.all? do |coord|
+    valid_coordinate?(coord)
+  end
+end
+```
+
+Now lets start making sure it can return false in certain situations. Unskipping the 2nd test...
+
+```ruby
+def test_valid_placement_returns_false_for_invalid_placement
+  cruiser = Ship.new("Cruiser", 3)
+  
+  # wrong length
+  refute @board.valid_placement(cruiser, ["A1", "A2"])
+  
+  # diagonal placement
+  refute @board.valid_placement(cruiser, ["A1", "B3", "B4"])
+  
+  # outside the bounds of the board vertially
+  refute @board.valid_placement(cruiser, ["C1", "D1", "E1"])
+  
+  # outside the bounds of the board horizontally
+  refute @board.valid_placement(cruiser, ["C3", "C4", "C5"])
+end 
+```
+
+And it passes? No further code required? That's concerning, because I didn't expect the diaganol placement to pass. Those are all valid coordinates. 🤔
+
+oh, nevermind, something funky was happening, my editor has been strange, it wasn't running the 2nd test case, I'm getting the failures I expected now.
+
+### Sidebar about how to run tests
+
+Normally, I'm running my tests with `rake`
+
+But when I want to run just a single test (lots of reasons you and I might wanna do so) I run the test file directly with `ruby`, and I pass a flag with the name of the test I want to run, like so:
+
+```
+$ ruby test/board_test.rb --name/test_valid_placement_returns_false_for_invalid_placement/
+```
+
+or, even more concisely:
+
+```
+$ ruby test/board_test.rb -n/test_valid_placement_returns_false_for_invalid_placement/
+```
+
+Practice this yourself. It's a powerful tool, especially if you want to stick a `pry` in your library code, but hit it only with a certain test running, instead of randomly hitting it from multiple test cases.
+
+------------------------
+
+I'm renaming some methods:
+
+```ruby
+def valid_placement?(ship, coords)
+  return false if invalid_ship_length?(ship, coords)
+  validate_coords_are_within_board(coords)
+  true
+end
+
+def invalid_ship_length?(ship, coords)
+  ship.length != coords.length
+end
+```
+
+This now correctly checks for ship length, fails on the `diagonal placement` line of my test.
+
+this is a bit complicated of a check:
+
+```ruby
+def valid_placement?(ship, coords)
+  return false if invalid_ship_length?(ship, coords)
+  return false if any_diagonal_placements?(coords)
+  validate_coords_are_within_board(coords)
+  true
+end
+
+def any_diagonal_placements?(coords)
+  # going to compare the first portion of the coord value to it's
+  # subsequent coordinate placement, if there's any that go
+  # A => B, and the 2nd coord value isn't the same as the prior
+  # coord value, like A1 => B1 is good, but A1 => B2 is bad, 
+  # check fails.
+end
+```
+
+It's a little complicated, so I'm gonna test it directly:
+
+```ruby
+def test_diagonal_placement_returns_true_if_any_placements_are_diagonal
+  assert @board.any_diagonal_placements?(["A1", "B2"])
+end
+```
+
+Here's the method as I'm ready to run the first test. I'm using `each_with_index` because then I can reliably grab the next item in the array. Then I'll play around in Pry a bit to get the rows and such. 
+
+Since the coords are coming in as string pairs, like: `"A1"`, `"B3"`, i'm looking at the [String methods](https://ruby-doc.org/core-2.6.5/String.html) to figure out how to get the first element of the string. I could call `"B3".split("").first` but that seems clunky.
+
+`String#chars` should do it.
+
+Notice how I'm using `next`: https://ruby-doc.org/core-2.7.3/Enumerator.html#next-method
+
+If `next`  is evaluated, it jumps straight to the next enumerator. In this case, the `contains_diagonal_placement` value is set to false at the outset, so if the line setting it to `true` is never run, when the enumerable finishes, and that value is returned, it comes back as false, and... we're good to go.
+
+Here's what I've got, have not run the tests yet. This is complicated, but if it looks like it works, I'll refactor it into something simpler:
+
+```ruby
+def valid_placement?(ship, coords)
+  return false if invalid_ship_length?(ship, coords)
+  return false if any_diagonal_placements?(coords)
+  validate_coords_are_within_board(coords)
+  true
+end
+
+def any_diagonal_placements?(coords)
+  # going to compare the first portion of the coord value to it's
+  # subsequent coordinate placement, if there's any that go
+  # A => B, and the 2nd coord value isn't the same as the prior
+  # coord value, like A1 => B1 is good, but A1 => B2 is bad, 
+  # check fails.
+  contains_diagonal_placement = false
+  coords.each_with_index do |coord, i|
+    return if coord
+    # check if row is same, `next` if so
+    row_1 = coord.chars.first
+    row_2 = coords[i+1].chars.first # check the next coord in the array
+    next if row_1 == row_2
+    
+    if row_1 != row_2
+      col_1 = coord.chars.last
+      col_2 = coords[i+1].chars.last
+      next if col_1 == col_2
+    end
+    contains_diagonal_placement = true
+  end
+  contains_diagonal_placement
+end
+
+def invalid_ship_length?(ship, coords)
+  ship.length != coords.length
+end
+```
+
+Ah, now I'm getting:
+
+```
+1) Error:
+BoardTest#test_valid_placement_returns_false_for_invalid_placement:
+NoMethodError: undefined method `chars' for nil:NilClass
+```
+
+This is common when using `each_with_index` where you `+1` the index - that means on the _last_ run of the enumerable, you're trying to access something outside of the array:
+
+```ruby
+array = [1, 2, 3]
+array.each_with_index do |num, i|
+  array[i]
+  array[i + 1] # this will eventually run array[3], which doesn't exist
+  # and will retun nil
+end
+```
+
+The fix is to use a [guard clause](https://www.thechrisoshow.com/2009/02/16/using-guard-clauses-in-your-ruby-code/) to exit the enumerable when we've iterated enough times:
+
+```ruby
+array = [1, 2, 3]
+array.each_with_index do |num, i|
+  return if array[i + 1].nil? # guard clause, ends the method early
+                              # the last time it runs
+  
+  array[i]
+  array[i + 1]
+end
+```
+
+So, a little more working around it, I've got:
+
+```ruby
+def any_diagonal_placements?(coords)
+  contains_diagonal_placement = false
+  
+  coords.each_with_index do |coord, i|
+    return if coords[i+1].nil?
+    
+    # check if row is same, `next` if so
+    row_1 = coord.chars.first
+    row_2 = coords[i+1].chars.first
+    next if row_1 == row_2
+    
+    if row_1 != row_2
+      col_1 = coord.chars.last
+      col_2 = coords[i+1].chars.last
+      contains_diagonal_placement = true if col_1 != col_2
+    end
+  end
+  contains_diagonal_placement
+end
+```
+Took me a while to figure out why i was getting `nil` from this method, no matter what. Turns out it was my `return` statement. Take a look at the guard clause now:
+
+```ruby
+def any_diagonal_placements?(coords)
+  contains_diagonal_placement = false
+  
+  coords.each_with_index do |coord, i|
+    return contains_diagonal_placement if coords[i+1].nil?
+    
+    row_1 = coord.chars.first
+    row_2 = coords[i+1].chars.first
+    next if row_1 == row_2
+    
+    if row_1 != row_2
+      col_1 = coord.chars.last
+      col_2 = coords[i+1].chars.last
+      contains_diagonal_placement = true if col_1 != col_2
+    end
+  end
+end
+```
+
+now the test passes. Lets upgrade it with more complicated input:
+
+```ruby
+def test_diagonal_placement_returns_true_if_any_placements_are_diagonal
+  assert @board.any_diagonal_placements?(["A1", "B2"])
+  refute @board.any_diagonal_placements?(["A1", "B1"])
+  refute @board.any_diagonal_placements?(["A1", "A1"])
+  assert @board.any_diagonal_placements?(["A1", "A2", "B3"])
+  assert @board.any_diagonal_placements?(["A1", "B1", "C2"])
+end
+```
+
+Here's how my test is shaping up:
+
+```ruby
+def test_valid_placement_returns_false_for_invalid_placement
+  cruiser = Ship.new("Cruiser", 3)
+  
+  # wrong length.... # done
+  refute @board.valid_placement?(cruiser, ["A1", "A2"])
+  
+  # diagonal placement... # done
+  refute @board.valid_placement?(cruiser, ["A1", "B3", "B4"])
+  
+  # outside the bounds of the board vertially ... # TODO
+  refute @board.valid_placement?(cruiser, ["C1", "D1", "E1"])
+  
+  # outside the bounds of the board horizontally ... # TODO
+  refute @board.valid_placement?(cruiser, ["C3", "C4", "C5"])
+end  
+```
+
+Need to check for being outside the board vertically... which would be invalid coordinates, so I can just `return` if that method comes back false. I'm also renaming it, so it's a bit more clear:
+
+```ruby
+def valid_placement?(ship, coords)
+  return false if invalid_ship_length?(ship, coords)
+  return false if any_diagonal_placements?(coords)
+  return false if !all_cords_inside_board?(coords)
+  true
+end
+
+.
+.
+.
+
+def all_cords_inside_board?(coords)
+  coords.all? do |coord|
+    valid_coordinate?(coord)
+  end
+end
+```
+
+and tests pass!
+
+I added all of this in this commit:
+
+https://github.com/josh-works/battleship/commit/8bf784a
+
+I'm also making these new methods "private", which is a way to show to other developers that these methods ought not be called from outside of the class. It's also more common to not test private methods, but common to test public methods.
+
+Since I didn't add test for all these methods, I'm marking them all as `private`. Here's what that looks like:
+
+https://github.com/josh-works/battleship/commit/b914521
