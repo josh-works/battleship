@@ -50,4 +50,31 @@ class BoardTest < Minitest::Test
     # outside the bounds of the board horizontally ... # TODO
     refute @board.valid_placement?(cruiser, ["C3", "C4", "C5"])
   end  
+  
+  def test_place_places_ship_in_cells
+    cruiser = Ship.new(cruiser, 3)
+    @board.place(cruiser, ["A1", "A2", "A3"])
+    
+    assert_equal cruiser, @board.cells["A1"].ship
+    assert_equal cruiser, @board.cells["A2"].ship
+    assert_equal cruiser, @board.cells["A3"].ship
+    refute @board.cells["A4"].ship
+  end
+  
+  def test_coords_overlap_with_existing_ship_returns_false_if_overlapping_ship
+    cruiser = Ship.new("Cruiser", 3)
+    
+    @board.place(cruiser, ["A1", "A2", "A3"])
+
+    assert @board.coords_overlap_with_existing_ship?(["A1", "B1", "C1", "D1"])
+  end
+  
+  def test_valid_placement_returns_false_if_overlapping_ships
+    cruiser = Ship.new("Cruiser", 3)
+    sub = Ship.new("Submarine", 4)
+    
+    @board.place(cruiser, ["A1", "A2", "A3"])
+    
+    refute @board.valid_placement?(sub, ["A1", "B1", "C1", "D1"])
+  end
 end

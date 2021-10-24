@@ -23,30 +23,45 @@ class Board
     return false if invalid_ship_length?(ship, coords)
     return false if any_diagonal_placements?(coords)
     return false if !all_cords_inside_board?(coords)
+    return false if coords_overlap_with_existing_ship?(coords)
     true
   end
   
-  private
+  def coords_overlap_with_existing_ship?(coords)
+    coords.any? do |coord|
+      !cells[coord].empty?
+    end
+  end
+  
+  def place(ship, coords)
+    return false unless valid_placement?(ship, coords)
     
-    def any_diagonal_placements?(coords)
-      contains_diagonal_placement = false
+    coords.each do |coord|  
+      cells[coord].place_ship(ship)
+    end
+  end
+  
+  
+  def any_diagonal_placements?(coords)
+    contains_diagonal_placement = false
+    
+    coords.each_with_index do |coord, i|
+      return contains_diagonal_placement if coords[i+1].nil?
       
-      coords.each_with_index do |coord, i|
-        return contains_diagonal_placement if coords[i+1].nil?
-        
-        # check if row is same, `next` if so
-        row_1 = coord.chars.first
-        row_2 = coords[i+1].chars.first
-        next if row_1 == row_2
-        
-        if row_1 != row_2
-          col_1 = coord.chars.last
-          col_2 = coords[i+1].chars.last
-          contains_diagonal_placement = true if col_1 != col_2
-        end
+      # check if row is same, `next` if so
+      row_1 = coord.chars.first
+      row_2 = coords[i+1].chars.first
+      next if row_1 == row_2
+      
+      if row_1 != row_2
+        col_1 = coord.chars.last
+        col_2 = coords[i+1].chars.last
+        contains_diagonal_placement = true if col_1 != col_2
       end
     end
+  end
     
+    private
     def invalid_ship_length?(ship, coords)
       ship.length != coords.length
     end

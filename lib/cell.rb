@@ -7,7 +7,8 @@ class Cell
   end
   
   def empty?
-    true unless ship
+    return false if ship
+    true
   end
   
   def place_ship(ship)
