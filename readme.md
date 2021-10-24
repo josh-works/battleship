@@ -838,6 +838,9 @@ https://github.com/josh-works/battleship/commit/87d24b8
 
 Now +1 the index, so it doesn't start at 0, re-run the tests... and access the array correctly:
 
+![in pry](./images/array-access.jpg)
+
+
 https://github.com/josh-works/battleship/commit/303e0e7
 
 Oh, and... lets make sure I've got 16 cells. 
@@ -1336,4 +1339,100 @@ Again, do what you'd like.
 
 I think this took me about 30 minutes, I'm calling it here for now, again. I'll take on the `placing ships` piece next.
 
+## Placing Ships
 
+Looks like we'll have this `Board#place` method that will take a ship, and an appropriate number of sequential valid placements. 
+
+Assuming it's all valid and such, each placed coordinate will cause the similarly-named cell to be filled with a placement, etc. Makes sense.
+
+```rb
+> board = Board.new
+# => #<Board:0x00007fcb0e1f6720...>
+
+> cruiser = Ship.new("Cruiser", 3)    
+# => #<Ship:0x00007fcb0e1ffa28...>
+
+> board.place(cruiser, ["A1", "A2", "A3"])    
+
+> cell_1 = board.cells["A1"]    
+# => #<Cell:0x00007fcb0e1f66a8...>
+
+> cell_2 = board.cells["A2"]
+# => #<Cell:0x00007fcb0e1f6630...>
+
+> cell_3 = board.cells["A3"]    
+# => #<Cell:0x00007fcb0e1f65b8...>
+
+> cell_1.ship
+# => #<Ship:0x00007fcb0e1ffa28...>
+
+> cell_2.ship
+# => #<Ship:0x00007fcb0e1ffa28...>
+
+> cell_3.ship
+# => #<Ship:0x00007fcb0e1ffa28...>
+
+> cell_3.ship == cell_2.ship
+# => true
+```
+
+
+OK, a little kicking the tires. Here's the test, and the code to make it pass:
+
+```ruby
+# test/board_test.rb
+def test_place_places_ship_in_cells
+  cruiser = Ship.new(cruiser, 3)
+  @board.place(cruiser, ["A1", "A2", "A3"])
+  require "pry"; binding.pry
+  assert_equal cruiser, @board.cells["A1"].ship
+end
+
+# lib/board.rb
+def place(ship, coords)
+  return false unless valid_placement?(ship, coords)
+  
+  coords.each do |coord|  
+    cells[coord].place_ship(ship)
+  end
+end
+```
+
+Looks like it works:
+
+![place ship](./images/place-ship.jpg)
+
+
+Adding the recommended test for validations, to make sure we know ships cannot overlap:
+
+```ruby
+
+def test_valid_placement_returns_false_if_overlapping_ships
+  cruiser = Ship.new("Cruiser", 3)
+  sub = Ship.new("Submarine", 4)
+  
+  @board.place(cruiser, ["A1", "A2", "A3"])
+  
+  refute @board.valid_placement?(sub, ["A1", "B1", "C1", "D1"])
+end
+```
+
+This currently fails, because `valid_placement?` says it's valid when it's not.
+
+I had to update `Cell#empty?`. Was getting `nil` when I expected `false`. 
+
+```ruby
+# lib/cell.rb
+def empty?
+  return false if ship
+  true
+end
+```
+
+Did this whole method with passing tests here:
+
+https://github.com/josh-works/battleship/commit/4de83ae
+
+## Rendering the board
+
+i'll pick this up later.

@@ -77,4 +77,13 @@ class BoardTest < Minitest::Test
     
     refute @board.valid_placement?(sub, ["A1", "B1", "C1", "D1"])
   end
+  
+  def test_render_renders_nicely_formatted_board
+    expected =  "  1 2 3 4 \n" +
+                "A . . . . \n" +
+                "B . . . . \n" +
+                "C . . . . \n" +
+                "D . . . . \n"
+    assert_equal expected, @board.render
+  end
 end
