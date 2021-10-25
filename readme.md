@@ -1435,4 +1435,57 @@ https://github.com/josh-works/battleship/commit/4de83ae
 
 ## Rendering the board
 
-i'll pick this up later.
+we want to be able to say `board.render` and get something like the following, printed to the terminal:
+
+```
+  1 2 3 4 
+A S S S . 
+B . . . . 
+C . . . . 
+D . . . . 
+```
+
+Phew. I didn't bother tracking every single tiny iteration i went through to get the render method. As I went, I extracted the `build_board_hash` into it's own method, so I could get up an hash like:
+
+
+
+
+Here's what I ended up with, adding some comments:
+
+```ruby
+def render
+  output = "" # collector for the finished product
+  top_row = "  " # building the "header" or top row. 
+  width.times { |i| top_row += "#{i + 1} " } # It'll auto-size to board width
+  top_row += "\n" # need a newline
+  
+  output += top_row # adding the top row to the output
+  
+  board_hash = build_board_hash # I wanted a hash with the keys as A, B, C, etc, and the values as `....` or whatever
+  
+  board_hash.each do |k, v|
+    output += "#{k} #{v}\n" # adding the hash to the output
+  end
+  output # returning the collector
+end
+
+def build_board_hash 
+  cells.reduce({}) do |acc, coord_array|
+    row = coord_array[0].chars.first
+    cell = coord_array[1]
+    
+    acc[row] ||= "" # if acc["A"] doesn't exist, set it to ""
+    acc[cell.coordinate.chars.first] += "#{cell.render} " # add cell's `render` value
+    acc # return the accumulator as the last line of the reduc
+  end
+end
+```
+
+And the test passes. I'll update this down the road, as it makes sense.
+
+For now, this finishes iteration 2. 
+
+All this lives here:
+
+https://github.com/josh-works/battleship/commit/68f542d
+
