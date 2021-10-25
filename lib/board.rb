@@ -70,25 +70,25 @@ class Board
     output += top_row
     
     board_hash = build_board_hash
-    
     board_hash.each do |k, v|
       output += "#{k} #{v}\n"
     end
     output
   end
   
-  def build_board_hash 
-    cells.reduce({}) do |acc, coord_array|
-      row = coord_array[0].chars.first
-      cell = coord_array[1]
-      
-      acc[row] ||= ""
-      acc[cell.coordinate.chars.first] += "#{cell.render} "
-      acc
+  private
+  
+    def build_board_hash 
+      cells.reduce({}) do |acc, coord_array|
+        row = coord_array[0].chars.first
+        cell = coord_array[1]
+        
+        acc[row] ||= ""
+        acc[cell.coordinate.chars.first] += "#{cell.render} "
+        acc
+      end
     end
-  end
     
-    private
     def invalid_ship_length?(ship, coords)
       ship.length != coords.length
     end
