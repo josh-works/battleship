@@ -1,12 +1,12 @@
 class Board
-  attr_reader :cells
-  def initialize()
+  attr_reader :cells, :width
+  def initialize(width = 4)
     @cells = {}
+    @width = width
     build_cells
   end
   
   def build_cells
-    width = 4
     ("a".."d").each do |letter|
       width.times do |num|  
         coord = letter.upcase + (num + 1).to_s
@@ -58,6 +58,33 @@ class Board
         col_2 = coords[i+1].chars.last
         contains_diagonal_placement = true if col_1 != col_2
       end
+    end
+  end
+  
+  def render
+    output = ""
+    top_row = "  "
+    width.times { |i| top_row += "#{i + 1} " }
+    top_row += "\n"
+    
+    output += top_row
+    
+    board_hash = build_board_hash
+    
+    board_hash.each do |k, v|
+      output += "#{k} #{v}\n"
+    end
+    output
+  end
+  
+  def build_board_hash 
+    cells.reduce({}) do |acc, coord_array|
+      row = coord_array[0].chars.first
+      cell = coord_array[1]
+      
+      acc[row] ||= ""
+      acc[cell.coordinate.chars.first] += "#{cell.render} "
+      acc
     end
   end
     

@@ -84,6 +84,7 @@ class BoardTest < Minitest::Test
                 "B . . . . \n" +
                 "C . . . . \n" +
                 "D . . . . \n"
+    puts build_board_hash
     assert_equal expected, @board.render
   end
 end
